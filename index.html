@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lulu Bowls — Poke Bowls Frescos · Arequipa</title>
+
+<!-- ── Fuentes ─────────────────────────────────────────── -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght,FILL@400,1&display=swap" rel="stylesheet"/>
+
+<!-- ── GSAP ───────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<!-- ── Tailwind ───────────────────────────────────────── -->
+<script>
+  tailwind = { config: {
+    theme: { extend: {
+      colors: {
+        brand:         "#E8523B",
+        "brand-dark":  "#C0311C",
+        "brand-light": "#FFE8E3",
+        accent:        "#FF8C5A",
+        fresh:         "#2BAC76",
+        "fresh-light": "#D0F4E3",
+        cream:         "#FFFAF7",
+        "cream-dark":  "#FFF0E8",
+        "text-main":   "#1A0A00",
+        "text-soft":   "#6B3D2E",
+      },
+      fontFamily: {
+        display: ["Pacifico", "cursive"],
+        sans:    ["Nunito", "sans-serif"],
+        body:    ["Nunito Sans", "sans-serif"],
+      }
+    }}
+  }
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+/* ── Reset / base ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { overflow-x: hidden; font-family: 'Nunito Sans', sans-serif; }
+
+.material-symbols-rounded {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ── Barra de progreso ──────────────────────────────── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, #E8523B, #FF8C5A, #2BAC76);
+  z-index: 9999; transition: width .05s linear;
+  box-shadow: 0 0 8px rgba(232,82,59,0.6);
+}
+
+/* ── Preloader ──────────────────────────────────────── */
+#preloader {
+  position: fixed; inset: 0; z-index: 9998;
+  background: #FFFAF7;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.25rem;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+#preloader.hide { opacity: 0; visibility: hidden; }
+
+#bowl-anim { width: 110px; height: 110px; }
+
+.steam-line {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: steamDraw 1s ease-out forwards;
+}
+.s1 { animation-delay: .2s; }
+.s2 { animation-delay: .4s; }
+.s3 { animation-delay: .6s; }
+@keyframes steamDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.topping {
+  opacity: 0;
+  animation: tPop .35s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.t1 { animation-delay: .8s; }
+.t2 { animation-delay: 1.0s; }
+.t3 { animation-delay: 1.2s; }
+.t4 { animation-delay: 1.35s; }
+@keyframes tPop {
+  from { opacity:0; transform: scale(0) translateY(6px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.preloader-dots span {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #E8523B; margin: 0 3px;
+  animation: dotBounce .9s ease-in-out infinite;
+}
+.preloader-dots span:nth-child(2) { animation-delay: .15s; background: #FF8C5A; }
+.preloader-dots span:nth-child(3) { animation-delay: .30s; background: #2BAC76; }
+@keyframes dotBounce {
+  0%,80%,100% { transform: translateY(0); }
+  40%          { transform: translateY(-10px); }
+}
+
+/* ── Partículas flotantes de fondo ──────────────────── */
+.particle {
+  position: fixed; border-radius: 50%;
+  pointer-events: none; z-index: 0; opacity: 0;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: .35; }
+  90%  { opacity: .25; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+#navbar {
+  position: fixed; top: 0; width: 100%; z-index: 500;
+  background: rgba(255,250,247,.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232,82,59,.08);
+  transition: padding .3s, box-shadow .3s;
+}
+#navbar.scrolled {
+  padding-top: .5rem; padding-bottom: .5rem;
+  box-shadow: 0 4px 30px rgba(26,10,0,.09);
+}
+.nav-link {
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+  color: #6B3D2E; transition: color .2s;
+}
+.nav-link:hover, .nav-link.active { color: #E8523B; }
+
+/* ── Hero ───────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(255,250,247,.97) 0%, rgba(255,232,220,.85) 50%, rgba(255,245,236,.95) 100%),
+    url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1400&q=90') center/cover no-repeat;
+}
+
+/* ── Título con gradiente ───────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #C0311C 0%, #E8523B 60%, #A02010 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Marquee ────────────────────────────────────────── */
+.marquee-wrap { overflow: hidden; white-space: nowrap; }
+.marquee-track {
+  display: inline-flex; gap: 0;
+  animation: marquee 22s linear infinite;
+}
+.marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Card 3D tilt ───────────────────────────────────── */
+.tilt-card { transform-style: preserve-3d; transition: transform .1s; }
+
+/* ── Botón ripple ───────────────────────────────────── */
+.btn-ripple { position: relative; overflow: hidden; }
+.btn-ripple::after {
+  content: '';
+  position: absolute; inset: -1px; border-radius: inherit;
+  background: rgba(255,255,255,.35);
+  transform: scale(0); opacity: 0;
+  transition: transform .5s ease, opacity .5s ease;
+}
+.btn-ripple:active::after { transform: scale(2.5); opacity: 0; transition: 0s; }
+
+/* ── Reveal animaciones ─────────────────────────────── */
+.reveal-up    { opacity: 0; transform: translateY(50px); }
+.reveal-left  { opacity: 0; transform: translateX(-50px); }
+.reveal-right { opacity: 0; transform: translateX(50px); }
+.reveal-scale { opacity: 0; transform: scale(.9); }
+
+/* ── Sección fondo alternado ────────────────────────── */
+.section-cream { background: #FFFAF7; }
+.section-warm  { background: linear-gradient(160deg, #FFF5F0 0%, #FFFAF7 100%); }
+.section-dark  {
+  background: linear-gradient(160deg, #2A0D00 0%, #1A0600 100%);
+  color: #fff;
+}
+
+/* ── WhatsApp flotante ──────────────────────────────── */
+#wa-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 490;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #25D366; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(37,211,102,.45);
+  animation: waPulse 2.8s ease-in-out infinite;
+  transition: transform .2s;
+}
+#wa-btn:hover { transform: scale(1.1); }
+@keyframes waPulse {
+  0%,100% { box-shadow: 0 6px 24px rgba(37,211,102,.45); }
+  50%      { box-shadow: 0 6px 36px rgba(37,211,102,.7), 0 0 0 10px rgba(37,211,102,.12); }
+}
+
+/* ── Toast ──────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 5.5rem; right: 1.5rem; z-index: 490;
+  background: #1A0A00; color: #fff;
+  padding: .7rem 1.2rem; border-radius: 9999px;
+  font-family: 'Nunito', sans-serif; font-size: .85rem; font-weight: 700;
+  display: flex; align-items: center; gap: .5rem;
+  transform: translateY(20px); opacity: 0; pointer-events: none;
+  transition: all .4s cubic-bezier(.2,1,.3,1);
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── Stats ──────────────────────────────────────────── */
+.stat-num {
+  font-family: 'Pacifico', cursive;
+  background: linear-gradient(135deg, #B02010, #E8523B);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Bowl card badge ────────────────────────────────── */
+.bowl-card {
+  transition: transform .35s cubic-bezier(.2,1,.3,1), box-shadow .35s;
+}
+.bowl-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 24px 48px rgba(232,82,59,.18);
+}
+
+/* ── Ingrediente pill ───────────────────────────────── */
+.ingredient-pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(255,255,255,.7); backdrop-filter: blur(8px);
+  border: 1px solid rgba(232,82,59,.15);
+  padding: .4rem .9rem; border-radius: 9999px;
+  font-family: 'Nunito', sans-serif; font-size: .8rem; font-weight: 700;
+  color: #1A0A00; white-space: nowrap;
+}
+
+/* ── Sección ubicación ──────────────────────────────── */
+.map-container {
+  border-radius: 2rem; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(26,10,0,.12);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+#footer {
+  background: linear-gradient(160deg, #2A0D00 0%, #1A0500 100%);
+}
+</style>
+</head>
+
+<body class="bg-cream text-text-main">
+
+<!-- ══ Barra de progreso ═══════════════════════════════ -->
+<div id="progress-bar"></div>
+
+<!-- ══ Preloader ══════════════════════════════════════ -->
+<div id="preloader">
+  <svg id="bowl-anim" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- vapor -->
+    <path class="steam-line s1" d="M38 38 Q35 30 38 22 Q41 14 38 6" stroke="#E8523B" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="steam-line s2" d="M55 35 Q52 27 55 19 Q58 11 55 4"  stroke="#FF8C5A" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="steam-line s3" d="M72 38 Q69 30 72 22 Q75 14 72 6" stroke="#2BAC76" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- bowl -->
+    <path d="M14 52 Q14 92 55 92 Q96 92 96 52 Z" fill="#FFE8E3"/>
+    <path d="M14 52 Q14 92 55 92 Q96 92 96 52" stroke="#E8523B" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <rect x="10" y="46" width="90" height="11" rx="5.5" fill="#E8523B"/>
+    <!-- arroz -->
+    <path d="M20 57 Q20 88 55 88 Q90 88 90 57 Z" fill="#fff9f2"/>
+    <!-- toppings -->
+    <circle class="topping t1" cx="38" cy="68" r="8"  fill="#E8523B"/>
+    <circle class="topping t2" cx="57" cy="64" r="7"  fill="#2BAC76"/>
+    <ellipse class="topping t3" cx="72" cy="70" rx="9" ry="6" fill="#FF8C5A"/>
+    <circle class="topping t4" cx="47" cy="76" r="6"  fill="#FFD166"/>
+  </svg>
+  <p style="font-family:'Pacifico',cursive;color:#E8523B;font-size:1.1rem;letter-spacing:.04em;">
+    Preparando tu bowl…
+  </p>
+  <div class="preloader-dots">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<!-- ══ Partículas flotantes ═══════════════════════════ -->
+<div id="particles-bg" aria-hidden="true"></div>
+
+<!-- ══ NAV ════════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="flex justify-between items-center px-6 md:px-10 py-4 max-w-7xl mx-auto">
+
+    <a href="#inicio" class="flex items-center">
+      <div class="h-16 w-16 rounded-full overflow-hidden shadow-lg border-2 border-brand/25 shrink-0">
+        <img src="./images/logo.jpg" alt="Lulu Bowls"
+             class="w-full h-full object-cover"
+             style="transform: scale(1.15); transform-origin: center;"/>
+      </div>
+    </a>
+
+    <div class="hidden md:flex gap-8 items-center">
+      <a href="#menu"      class="nav-link">Menú</a>
+      <a href="#catering"  class="nav-link">Catering</a>
+      <a href="#nosotros"  class="nav-link">Nosotros</a>
+      <a href="#ubicacion" class="nav-link">Locales</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="openWA('Hola! 🍣 Quiero hacer un pedido')"
+              class="material-symbols-rounded text-brand text-2xl hover:scale-110 transition-transform cursor-pointer select-none">
+        shopping_bag
+      </button>
+      <button onclick="openWA('Hola! 🍣 Quiero hacer un pedido')"
+              class="hidden md:flex items-center gap-2 bg-brand text-white px-6 py-2.5 rounded-full
+                     font-sans font-bold text-sm tracking-wide uppercase
+                     hover:bg-brand-dark transition-all shadow-md shadow-brand/25 btn-ripple">
+        Pide Ahora
+      </button>
+      <button id="mob-btn" class="md:hidden material-symbols-rounded text-text-main text-2xl">menu</button>
+    </div>
+  </div>
+
+  <!-- Menú móvil -->
+  <div id="mob-menu" class="hidden flex-col px-6 pb-5 gap-3 border-t border-brand/10">
+    <a href="#menu"      onclick="closeNav()" class="nav-link py-2.5 border-b border-brand/10">Menú</a>
+    <a href="#catering"  onclick="closeNav()" class="nav-link py-2.5 border-b border-brand/10">Catering</a>
+    <a href="#nosotros"  onclick="closeNav()" class="nav-link py-2.5 border-b border-brand/10">Nosotros</a>
+    <a href="#ubicacion" onclick="closeNav()" class="nav-link py-2.5">Locales</a>
+    <button onclick="openWA('Hola! Quiero hacer un pedido 🍣'); closeNav();"
+            class="bg-brand text-white py-3 rounded-full font-sans font-bold text-sm tracking-wide uppercase mt-2 btn-ripple">
+      Pide Ahora
+    </button>
+  </div>
+</nav>
+
+<!-- ══ HERO ═══════════════════════════════════════════ -->
+<section id="inicio" class="relative min-h-screen flex items-center pt-20" style="background:linear-gradient(135deg,#FFFAF7 0%,#FFE8DC 55%,#FFF5EF 100%);">
+
+  <!-- decoración de fondo -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute top-20 right-0 w-96 h-96 bg-brand/6 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-10 left-0 w-80 h-80 bg-accent/8 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/2 left-1/3 w-64 h-64 bg-fresh/5 rounded-full blur-2xl"></div>
+    <!-- patrón de puntos -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="2" fill="#E8523B"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#dots)"/>
+    </svg>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-16 w-full flex flex-col lg:flex-row items-center gap-14 lg:gap-20 relative z-10">
+
+    <!-- texto -->
+    <div class="flex-1 text-center lg:text-left">
+      <div id="hero-badge"
+           class="inline-flex items-center gap-2 bg-fresh-light border border-fresh/25
+                  px-5 py-2 rounded-full text-xs font-sans font-bold uppercase tracking-wider mb-8 shadow-sm"
+           style="color:#0f5c38;">
+        <span class="material-symbols-rounded text-sm">eco</span>
+        100 % Natural · Sin conservantes
+      </div>
+
+      <h1 id="hero-h1" class="font-sans font-black leading-[1.08] tracking-tight mb-6">
+        <span class="block text-5xl md:text-7xl lg:text-8xl text-text-main">El Alma de lo</span>
+        <span class="block text-6xl md:text-8xl lg:text-9xl gradient-text" style="font-family:'Pacifico',cursive;">
+          Fresco.
+        </span>
+      </h1>
+
+      <p id="hero-sub" class="font-body text-lg md:text-xl text-text-soft max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+        Poke bowls artesanales con los mejores ingredientes frescos del día.
+        Diseñados para la salud, curados para el sabor.
+      </p>
+
+      <!-- Pills ingredientes -->
+      <div id="hero-pills" class="flex flex-wrap gap-2 justify-center lg:justify-start mb-10">
+        <span class="ingredient-pill">🐟 Atún Ahi</span>
+        <span class="ingredient-pill">🥑 Aguacate</span>
+        <span class="ingredient-pill">🌿 Edamame</span>
+        <span class="ingredient-pill">🍋 Cítrico</span>
+        <span class="ingredient-pill">🌶️ Spicy</span>
+      </div>
+
+      <div id="hero-btns" class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+        <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})"
+                class="bg-brand text-white px-10 py-4 rounded-full font-sans font-extrabold text-base
+                       shadow-xl shadow-brand/30 hover:bg-brand-dark transition-all btn-ripple
+                       hover:-translate-y-1 active:scale-95">
+          Arma tu Bowl 🍣
+        </button>
+        <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})"
+                class="bg-white text-brand border-2 border-brand/20 px-10 py-4 rounded-full font-sans font-extrabold text-base
+                       hover:border-brand hover:bg-brand-light transition-all btn-ripple active:scale-95">
+          Ver Menú
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div id="hero-stats" class="flex gap-8 mt-12 justify-center lg:justify-start">
+        <div class="text-center">
+          <div class="stat-num text-3xl font-sans font-black" data-count="100">0</div>
+          <div class="font-body text-xs text-text-soft mt-1">% Fresco</div>
+        </div>
+        <div class="w-px bg-brand/15"></div>
+        <div class="text-center">
+          <div class="stat-num text-3xl font-sans font-black" data-count="0">0</div>
+          <div class="font-body text-xs text-text-soft mt-1">Conservantes</div>
+        </div>
+        <div class="w-px bg-brand/15"></div>
+        <div class="text-center">
+          <div class="stat-num text-3xl font-sans font-black" data-count="10">0</div>
+          <div class="font-body text-xs text-text-soft mt-1">+ Opciones</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- imagen hero -->
+    <div class="flex-1 w-full max-w-md lg:max-w-none mx-auto relative" id="hero-img-wrap">
+      <div class="aspect-square rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=90"
+             alt="Poke Bowl Lulu Signature"
+             class="w-full h-full object-cover" id="hero-photo"/>
+        <!-- overlay sutil -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+      </div>
+      <!-- badge flotante -->
+      <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-max
+                  bg-white rounded-2xl px-5 py-3 shadow-xl flex items-center gap-3 border border-brand/10">
+        <div class="w-9 h-9 rounded-full overflow-hidden shrink-0">
+        <img src="./images/logo.jpg" alt="" class="w-full h-full object-cover"
+             style="transform: scale(1.15); transform-origin: center;"/>
+      </div>
+        <div>
+          <div class="font-sans font-black text-sm text-text-main leading-none">Más pedido hoy</div>
+          <div class="font-body text-xs text-text-soft mt-0.5">Lulu Signature</div>
+        </div>
+        <span class="material-symbols-rounded text-brand text-lg">favorite</span>
+      </div>
+      <!-- decoración -->
+      <div class="absolute -top-8 -right-8 w-40 h-40 bg-brand/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-8 -left-8 w-52 h-52 bg-fresh/8 rounded-full blur-3xl pointer-events-none"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ MARQUEE ingredientes ═══════════════════════════ -->
+<div class="py-4 bg-brand overflow-hidden">
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <!-- repetido para loop continuo -->
+      <template id="marquee-tpl">
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🐟 Atún Ahi</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🥑 Aguacate Fresco</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🌿 Edamame</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🍋 Aliño Cítrico</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🌶️ Spicy Mayo</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🫚 Sésamo Tostado</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🍚 Arroz Premium</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🥗 Quinua Bio</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🫛 Jengibre</span>
+        <span class="ingredient-pill mx-3" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);color:#fff;">🧅 Cebolla Crispy</span>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPROMISO (Nosotros) ══════════════════════════ -->
+<section id="nosotros" class="section-cream py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="text-center mb-16 reveal-up">
+      <span class="font-sans font-bold text-fresh text-xs tracking-[.2em] uppercase mb-3 block">Nuestro Compromiso</span>
+      <h2 class="font-sans font-black text-4xl md:text-5xl text-text-main mb-4">
+        Frescura en <span class="gradient-text">Cada Fibra.</span>
+      </h2>
+      <p class="font-body text-text-soft max-w-xl mx-auto leading-relaxed">
+        Ingredientes cosechados al amanecer. Cero conservantes, solo naturaleza pura.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+
+      <!-- card -->
+      <div class="reveal-up bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 tilt-card bowl-card" style="transition-delay:.0s">
+        <div class="h-52 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80"
+               alt="Ingredientes frescos" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+        </div>
+        <div class="p-7">
+          <div class="w-11 h-11 rounded-2xl bg-fresh-light flex items-center justify-center mb-4">
+            <span class="material-symbols-rounded text-fresh">eco</span>
+          </div>
+          <h3 class="font-sans font-black text-xl text-text-main mb-2">Base Botánica</h3>
+          <p class="font-body text-sm text-text-soft leading-relaxed">
+            Verduras lavadas tres veces, crujientes y ricas en nutrientes. La base perfecta.
+          </p>
+        </div>
+      </div>
+
+      <div class="reveal-up bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 tilt-card bowl-card md:mt-10" style="transition-delay:.12s">
+        <div class="h-52 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80"
+               alt="Pesca sostenible" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+        </div>
+        <div class="p-7">
+          <div class="w-11 h-11 rounded-2xl bg-brand-light flex items-center justify-center mb-4">
+            <span class="material-symbols-rounded text-brand">water</span>
+          </div>
+          <h3 class="font-sans font-black text-xl text-text-main mb-2">Pesca Sostenible</h3>
+          <p class="font-body text-sm text-text-soft leading-relaxed">
+            Atún y salmón capturados con línea, entregados cada mañana desde aguas regionales.
+          </p>
+        </div>
+      </div>
+
+      <div class="reveal-up bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 tilt-card bowl-card" style="transition-delay:.24s">
+        <div class="h-52 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80"
+               alt="Salsas artesanales" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+        </div>
+        <div class="p-7">
+          <div class="w-11 h-11 rounded-2xl bg-yellow-50 flex items-center justify-center mb-4">
+            <span class="material-symbols-rounded text-yellow-500">blender</span>
+          </div>
+          <h3 class="font-sans font-black text-xl text-text-main mb-2">Salsas de Autor</h3>
+          <p class="font-body text-sm text-text-soft leading-relaxed">
+            Sin gluten, elaboradas en pequeños lotes cada mañana. Tu salsa, tu sabor.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ MENÚ ════════════════════════════════════════════ -->
+<section id="menu" class="section-warm py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="text-center mb-16 reveal-up">
+      <span class="font-sans font-bold text-brand text-xs tracking-[.2em] uppercase mb-3 block">Nuestro Menú</span>
+      <h2 class="font-sans font-black text-4xl md:text-5xl text-text-main mb-4">
+        Creaciones <span class="gradient-text">Populares.</span>
+      </h2>
+      <div class="w-16 h-1.5 bg-gradient-to-r from-brand to-accent mx-auto rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Bowl 1 -->
+      <div class="reveal-scale bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 bowl-card tilt-card" style="transition-delay:.0s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
+               alt="Lulu Signature" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+          <span class="absolute top-3 left-3 bg-brand text-white text-[10px] font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full shadow">
+            ⭐ N.º 1
+          </span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-sans font-black text-lg text-text-main mb-1">Lulu Signature</h3>
+          <p class="font-body text-xs text-text-soft mb-4 leading-relaxed">
+            Atún ahi, mayo picante, cebolla china, macadamia y aguacate sobre arroz blanco.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="font-sans font-black text-xl text-brand">S/ 16.50</span>
+            <button onclick="addCart('Lulu Signature','S/ 16.50')"
+                    class="bg-brand text-white w-10 h-10 rounded-full flex items-center justify-center
+                           hover:bg-brand-dark transition-all shadow-md shadow-brand/25 btn-ripple active:scale-90">
+              <span class="material-symbols-rounded text-base">add_shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bowl 2 -->
+      <div class="reveal-scale bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 bowl-card tilt-card" style="transition-delay:.08s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&q=80"
+               alt="Jardín Botánico" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+          <span class="absolute top-3 left-3 bg-fresh text-white text-[10px] font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full shadow">
+            🌿 Vegano
+          </span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-sans font-black text-lg text-text-main mb-1">Jardín Botánico</h3>
+          <p class="font-body text-xs text-text-soft mb-4 leading-relaxed">
+            Tofu, edamame, jengibre, col rizada y aliño miso-tahini sobre quinua.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="font-sans font-black text-xl text-brand">S/ 14.00</span>
+            <button onclick="addCart('Jardín Botánico','S/ 14.00')"
+                    class="bg-brand text-white w-10 h-10 rounded-full flex items-center justify-center
+                           hover:bg-brand-dark transition-all shadow-md shadow-brand/25 btn-ripple active:scale-90">
+              <span class="material-symbols-rounded text-base">add_shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bowl 3 -->
+      <div class="reveal-scale bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 bowl-card tilt-card" style="transition-delay:.16s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&q=80"
+               alt="Sunrise Bowl" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+          <span class="absolute top-3 left-3 bg-accent text-white text-[10px] font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full shadow">
+            🔥 Nuevo
+          </span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-sans font-black text-lg text-text-main mb-1">Sunrise Bowl</h3>
+          <p class="font-body text-xs text-text-soft mb-4 leading-relaxed">
+            Salmón, mango, pepino, sésamo tostado y aliño cítrico sobre arroz de coliflor.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="font-sans font-black text-xl text-brand">S/ 17.00</span>
+            <button onclick="addCart('Sunrise Bowl','S/ 17.00')"
+                    class="bg-brand text-white w-10 h-10 rounded-full flex items-center justify-center
+                           hover:bg-brand-dark transition-all shadow-md shadow-brand/25 btn-ripple active:scale-90">
+              <span class="material-symbols-rounded text-base">add_shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bowl 4 -->
+      <div class="reveal-scale bg-white rounded-[2rem] overflow-hidden shadow-sm border border-brand/8 bowl-card tilt-card" style="transition-delay:.24s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&q=80"
+               alt="Spicy Tuna" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"/>
+          <span class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full shadow">
+            🌶️ Picante
+          </span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-sans font-black text-lg text-text-main mb-1">Spicy Tuna</h3>
+          <p class="font-body text-xs text-text-soft mb-4 leading-relaxed">
+            Atún spicy, sriracha, pepino, aguacate, masago y cebolla crispy sobre arroz negro.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="font-sans font-black text-xl text-brand">S/ 17.50</span>
+            <button onclick="addCart('Spicy Tuna','S/ 17.50')"
+                    class="bg-brand text-white w-10 h-10 rounded-full flex items-center justify-center
+                           hover:bg-brand-dark transition-all shadow-md shadow-brand/25 btn-ripple active:scale-90">
+              <span class="material-symbols-rounded text-base">add_shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-12 reveal-up">
+      <button onclick="openWA('Hola! Quisiera ver el menú completo 🍣')"
+              class="border-2 border-brand text-brand px-10 py-4 rounded-full font-sans font-black text-sm
+                     tracking-wide uppercase hover:bg-brand hover:text-white transition-all btn-ripple">
+        Ver Menú Completo
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATERING ════════════════════════════════════════ -->
+<section id="catering" class="py-20 md:py-28 px-6 md:px-10 section-cream">
+  <div class="max-w-7xl mx-auto reveal-up">
+    <div class="relative bg-gradient-to-br from-brand to-brand-dark rounded-[2.5rem] p-10 md:p-16 overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-64 h-64 bg-white/10 rounded-full pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-10 w-80 h-80 bg-white/5 rounded-full pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
+        <div class="flex-1 text-center md:text-left">
+          <span class="inline-block bg-white/20 text-white text-xs font-sans font-black uppercase tracking-widest px-4 py-2 rounded-full mb-6">
+            Catering & Eventos
+          </span>
+          <h2 class="font-sans font-black text-3xl md:text-5xl text-white mb-5 leading-tight">
+            ¿Tienes un<br/>evento especial?
+          </h2>
+          <p class="font-body text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
+            Llevamos nuestros bowls frescos a tu evento, oficina o celebración.
+            Packs desde 10 personas.
+          </p>
+          <button onclick="openWA('Hola! Me interesa el catering para un evento 🎉')"
+                  class="bg-white text-brand px-10 py-4 rounded-full font-sans font-black text-sm
+                         tracking-wide uppercase hover:bg-cream-dark transition-all shadow-xl btn-ripple active:scale-95">
+            Consultar Catering
+          </button>
+        </div>
+        <div class="w-full md:w-60 aspect-square rounded-[2rem] overflow-hidden shadow-2xl flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80"
+               alt="Catering Lulu" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ UBICACIÓN ══════════════════════════════════════ -->
+<section id="ubicacion" class="section-warm py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="text-center mb-14 reveal-up">
+      <span class="font-sans font-bold text-brand text-xs tracking-[.2em] uppercase mb-3 block">Encuéntranos</span>
+      <h2 class="font-sans font-black text-4xl md:text-5xl text-text-main">
+        ¿Dónde <span class="gradient-text">estamos?</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+
+      <!-- Info -->
+      <div class="flex flex-col gap-5">
+
+        <div class="reveal-left bg-white rounded-[2rem] p-7 border border-brand/8 shadow-sm bowl-card">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-light flex items-center justify-center shrink-0">
+              <span class="material-symbols-rounded text-brand text-xl">location_on</span>
+            </div>
+            <div>
+              <p class="font-sans font-black text-base text-text-main mb-1">Dirección</p>
+              <p class="font-body text-text-main font-semibold leading-snug">
+                Portal de la Municipalidad 128<br/>Plaza de Armas
+              </p>
+              <p class="font-body text-text-soft text-sm mt-2 flex items-center gap-1.5">
+                <span class="material-symbols-rounded text-sm text-accent">info</span>
+                al costado del Súper
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-left bg-white rounded-[2rem] p-7 border border-brand/8 shadow-sm bowl-card" style="transition-delay:.1s">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-fresh-light flex items-center justify-center shrink-0">
+              <span class="material-symbols-rounded text-fresh text-xl">schedule</span>
+            </div>
+            <div class="w-full">
+              <p class="font-sans font-black text-base text-text-main mb-3">Horarios</p>
+              <div class="space-y-2 font-body text-sm">
+                <div class="flex justify-between"><span class="text-text-soft">Lun – Vie</span><span class="font-semibold text-text-main">11:00 – 22:00</span></div>
+                <div class="flex justify-between"><span class="text-text-soft">Sábados</span><span class="font-semibold text-text-main">10:00 – 23:00</span></div>
+                <div class="flex justify-between"><span class="text-text-soft">Domingos</span><span class="font-semibold text-text-main">10:00 – 21:00</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-left bg-white rounded-[2rem] p-7 border border-brand/8 shadow-sm bowl-card" style="transition-delay:.2s">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-[#25D366]/15 flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 fill-[#25D366]" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </div>
+            <div>
+              <p class="font-sans font-black text-base text-text-main">Teléfono / WhatsApp</p>
+              <p class="font-body text-text-soft text-sm">951 969 420</p>
+            </div>
+            <button onclick="openWA('Hola!')"
+                    class="ml-auto bg-[#25D366] text-white px-5 py-2.5 rounded-full font-sans font-black text-xs
+                           uppercase tracking-wide hover:bg-[#1ea855] transition-all btn-ripple shrink-0">
+              Escribir
+            </button>
+          </div>
+        </div>
+
+        <a href="https://maps.google.com/?q=Portal+de+la+Municipalidad+128+Plaza+de+Armas+Arequipa"
+           target="_blank" rel="noopener"
+           class="reveal-left flex items-center justify-center gap-3 bg-brand text-white px-8 py-4 rounded-full
+                  font-sans font-black text-sm tracking-wide uppercase
+                  hover:bg-brand-dark transition-all shadow-lg shadow-brand/25 btn-ripple active:scale-95">
+          <span class="material-symbols-rounded">directions</span>
+          Cómo Llegar
+        </a>
+      </div>
+
+      <!-- Mapa -->
+      <div class="reveal-right map-container h-[420px] md:h-[500px]">
+        <iframe
+          title="Ubicación Lulu Bowls"
+          src="https://maps.google.com/maps?q=Portal+de+la+Municipalidad+128+Plaza+de+Armas+Arequipa+Peru&t=&z=17&ie=UTF8&iwloc=&output=embed"
+          width="100%" height="100%" style="border:0;display:block;"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ CTA FINAL ══════════════════════════════════════ -->
+<section class="section-dark py-24 px-6 md:px-10 text-center">
+  <div class="max-w-3xl mx-auto reveal-up">
+    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-8 shadow-xl border-4 border-white/20">
+      <img src="./images/logo.jpg" alt="Lulu Bowls"
+           class="w-full h-full object-cover"
+           style="transform: scale(1.15); transform-origin: center;"/>
+    </div>
+    <h2 class="font-sans font-black text-4xl md:text-6xl text-white mb-6 leading-tight">
+      ¿Listo para tu próximo<br/>
+      <span style="font-family:'Pacifico',cursive;background:linear-gradient(135deg,#FF9060,#FF5533);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        bowl favorito?
+      </span>
+    </h2>
+    <p class="font-body text-white/60 text-lg mb-10">Pídelo ahora o visítanos en la Plaza de Armas.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button onclick="openWA('Hola! 🍣 Quiero hacer un pedido')"
+              class="bg-brand text-white px-10 py-4 rounded-full font-sans font-black text-sm tracking-wide uppercase
+                     hover:bg-brand-dark transition-all shadow-xl shadow-brand/30 btn-ripple active:scale-95 flex items-center justify-center gap-2">
+        <span class="material-symbols-rounded">chat</span>
+        Pedir por WhatsApp
+      </button>
+      <a href="#ubicacion"
+         class="border-2 border-white/25 text-white px-10 py-4 rounded-full font-sans font-black text-sm
+                tracking-wide uppercase hover:border-white hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-rounded">location_on</span>
+        Ver Ubicación
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="max-w-7xl mx-auto px-8 md:px-12 pt-16 pb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+      <div>
+        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 mb-5 shadow-lg">
+          <img src="./images/logo.jpg" alt="Lulu Bowls"
+               class="w-full h-full object-cover"
+               style="transform: scale(1.15); transform-origin: center;"/>
+        </div>
+        <p class="font-body text-sm text-white/55 leading-relaxed max-w-xs">
+          Poke bowls artesanales con los mejores ingredientes frescos.
+          Ubicados en la Plaza de Armas, Arequipa.
+        </p>
+        <div class="flex gap-3 mt-6">
+          <a href="https://instagram.com/lulubowls" target="_blank" rel="noopener"
+             class="w-10 h-10 rounded-full bg-white/10 hover:bg-brand flex items-center justify-center transition-colors">
+            <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://wa.me/51951969420" target="_blank" rel="noopener"
+             class="w-10 h-10 rounded-full bg-white/10 hover:bg-[#25D366] flex items-center justify-center transition-colors">
+            <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="flex gap-12">
+        <div class="flex flex-col gap-3">
+          <span class="font-sans font-black text-sm text-brand mb-2">Explorar</span>
+          <a href="#menu"      class="font-body text-sm text-white/55 hover:text-white transition-colors">Menú</a>
+          <a href="#catering"  class="font-body text-sm text-white/55 hover:text-white transition-colors">Catering</a>
+          <a href="#nosotros"  class="font-body text-sm text-white/55 hover:text-white transition-colors">Nosotros</a>
+        </div>
+        <div class="flex flex-col gap-3">
+          <span class="font-sans font-black text-sm text-brand mb-2">Info</span>
+          <a href="#" class="font-body text-sm text-white/55 hover:text-white transition-colors">Privacidad</a>
+          <a href="#" class="font-body text-sm text-white/55 hover:text-white transition-colors">Términos</a>
+          <a href="#ubicacion" class="font-body text-sm text-white/55 hover:text-white transition-colors">Local</a>
+        </div>
+      </div>
+
+      <div>
+        <span class="font-sans font-black text-sm text-brand mb-4 block">Contáctanos</span>
+        <p class="font-body text-sm text-white/55 leading-relaxed mb-1">
+          Portal de la Municipalidad 128, Plaza de Armas
+        </p>
+        <p class="font-body text-xs text-white/35 mb-4">(al costado del Súper)</p>
+        <button onclick="openWA('Hola!')"
+                class="bg-[#25D366] text-white px-6 py-3 rounded-full font-sans font-black text-xs
+                       uppercase tracking-wide flex items-center gap-2 hover:bg-[#1ea855] transition-colors btn-ripple">
+          <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          951 969 420
+        </button>
+      </div>
+    </div>
+
+    <div class="border-t border-white/8 pt-6 text-center font-body text-xs text-white/25">
+      © 2024 Lulu Bowls · Hecho con 🍣 en la Plaza de Armas, Arequipa.
+    </div>
+  </div>
+</footer>
+
+<!-- ══ Elementos fijos ════════════════════════════════ -->
+<a id="wa-btn" href="https://wa.me/51951969420?text=Hola!%20Quiero%20hacer%20un%20pedido%20%F0%9F%8D%A3"
+   target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg class="w-7 h-7 fill-white" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<div id="toast">
+  <span class="material-symbols-rounded text-[#25D366] text-base">check_circle</span>
+  <span id="toast-msg">Añadido</span>
+</div>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════ -->
+<script>
+const WA = '51951969420';
+
+/* ── WhatsApp ──────────────────────────────────────── */
+function openWA(msg) {
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+}
+function addCart(name, price) {
+  openWA(`Hola! Quiero pedir:\n🍣 ${name} (${price})\n¿Está disponible?`);
+  showToast(`${name} — ¡enviando pedido!`);
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Preloader ─────────────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('preloader').classList.add('hide'), 2500);
+});
+
+/* ── Marquee: duplicar contenido ───────────────────── */
+(function() {
+  const track = document.querySelector('.marquee-track');
+  const tpl   = document.getElementById('marquee-tpl');
+  if (!track || !tpl) return;
+  const items = tpl.content.cloneNode(true);
+  track.appendChild(items);                  // primera copia
+  const items2 = tpl.content.cloneNode(true);
+  track.appendChild(items2);                 // segunda copia para loop
+})();
+
+/* ── Mobile nav ────────────────────────────────────── */
+let navOpen = false;
+document.getElementById('mob-btn').addEventListener('click', () => {
+  navOpen = !navOpen;
+  const m = document.getElementById('mob-menu');
+  m.classList.toggle('hidden', !navOpen);
+  m.classList.toggle('flex',    navOpen);
+  document.getElementById('mob-btn').textContent = navOpen ? 'close' : 'menu';
+});
+function closeNav() {
+  navOpen = false;
+  document.getElementById('mob-menu').classList.add('hidden');
+  document.getElementById('mob-menu').classList.remove('flex');
+  document.getElementById('mob-btn').textContent = 'menu';
+}
+
+/* ── Nav shrink ────────────────────────────────────── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Barra de progreso ─────────────────────────────── */
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('progress-bar').style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+/* ── Partículas de fondo ───────────────────────────── */
+(function() {
+  const colors = ['#E8523B','#FF8C5A','#2BAC76','#FFD166','#E8523B'];
+  const cont   = document.getElementById('particles-bg');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    const size = Math.random() * 14 + 5;
+    p.className = 'particle';
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      background:${colors[i % colors.length]};
+      left:${Math.random()*100}vw;
+      animation-duration:${Math.random()*18+12}s;
+      animation-delay:${Math.random()*12}s;
+    `;
+    cont.appendChild(p);
+  }
+})();
+
+/* ── GSAP ──────────────────────────────────────────── */
+gsap.registerPlugin(ScrollTrigger);
+
+// Entrada hero con stagger
+gsap.timeline()
+  .from('#hero-badge',  { y:30, opacity:0, duration:.7, ease:'back.out(1.4)' }, .3)
+  .from('#hero-h1',     { y:60, opacity:0, duration:.9, ease:'power3.out' },    .5)
+  .from('#hero-sub',    { y:30, opacity:0, duration:.7, ease:'power2.out' },    .8)
+  .from('#hero-pills',  { y:20, opacity:0, duration:.6, ease:'power2.out' },   1.0)
+  .from('#hero-btns',   { y:20, opacity:0, duration:.6, ease:'power2.out' },   1.15)
+  .from('#hero-stats',  { y:20, opacity:0, duration:.6, ease:'power2.out' },   1.25)
+  .from('#hero-img-wrap',{ x:60, opacity:0, duration:1.1, ease:'power3.out' }, .6);
+
+// Parallax hero foto
+gsap.to('#hero-photo', {
+  yPercent: 18, ease: 'none',
+  scrollTrigger: { trigger:'#inicio', start:'top top', end:'bottom top', scrub:2 }
+});
+
+// Reveal secciones — fromTo para evitar conflicto con opacity:0 del CSS
+document.querySelectorAll('.reveal-up').forEach((el, i) => {
+  gsap.fromTo(el,
+    { y: 55, opacity: 0 },
+    { y: 0, opacity: 1, duration: .9, ease: 'power3.out',
+      delay: (i % 4) * .1,
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true } }
+  );
+});
+document.querySelectorAll('.reveal-left').forEach((el, i) => {
+  gsap.fromTo(el,
+    { x: -50, opacity: 0 },
+    { x: 0, opacity: 1, duration: .85, ease: 'power3.out',
+      delay: i * .12,
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true } }
+  );
+});
+document.querySelectorAll('.reveal-right').forEach(el => {
+  gsap.fromTo(el,
+    { x: 60, opacity: 0 },
+    { x: 0, opacity: 1, duration: .9, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true } }
+  );
+});
+document.querySelectorAll('.reveal-scale').forEach((el, i) => {
+  gsap.fromTo(el,
+    { scale: .85, opacity: 0 },
+    { scale: 1, opacity: 1, duration: .8, ease: 'back.out(1.2)',
+      delay: i * .09,
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true } }
+  );
+});
+
+// Contadores animados
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = +el.dataset.count;
+  const obj = { v: 0 };
+  gsap.to(obj, {
+    v: target, duration: 2.2, ease: 'power2.out',
+    onUpdate() { el.textContent = Math.round(obj.v); },
+    scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+  });
+});
+
+// Tilt 3D en tarjetas
+document.querySelectorAll('.tilt-card').forEach(card => {
+  if (window.matchMedia('(hover:hover)').matches) {
+    card.addEventListener('mousemove', e => {
+      const r  = card.getBoundingClientRect();
+      const xP = (e.clientX - r.left)  / r.width  - .5;
+      const yP = (e.clientY - r.top)   / r.height - .5;
+      gsap.to(card, { rotateY: xP * 8, rotateX: -yP * 8,
+                      transformPerspective: 800, duration: .25, ease: 'power2.out' });
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, { rotateY:0, rotateX:0, duration:.6, ease:'power3.out' });
+    });
+  }
+});
+</script>
+</body>
+</html>
