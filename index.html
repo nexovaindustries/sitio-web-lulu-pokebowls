@@ -46,7 +46,53 @@
 /* ── Reset / base ────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; overflow-x: hidden; scroll-padding-top: 76px; }
-body { overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='50%25' cy='60%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fff5ee'/%3E%3Cstop offset='100%25' stop-color='%23ffe8dc'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M12 9Q10.5 6 12 3' stroke='%23E8523B' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cpath d='M16 8Q14.5 5 16 2' stroke='%23FF8C5A' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cpath d='M20 9Q18.5 6 20 3' stroke='%232BAC76' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cellipse cx='16' cy='13' rx='12' ry='3.5' fill='%23C0311C'/%3E%3Cpath d='M4 14Q4 28 16 28Q28 28 28 14Z' fill='url(%23b)' stroke='%23C0311C' stroke-width='.5'/%3E%3Ccircle cx='10' cy='19' r='2.5' fill='%23E8523B'/%3E%3Ccircle cx='20' cy='18' r='2.2' fill='%232BAC76'/%3E%3Cellipse cx='15' cy='22' rx='3' ry='2' fill='%23FF8C5A'/%3E%3Ccircle cx='22' cy='22' r='1.5' fill='%23FFD166'/%3E%3Ccircle cx='8' cy='23' r='1.2' fill='%239B59B6'/%3E%3C/svg%3E") 16 28, auto;
+}
+a, button { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='50%25' cy='60%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fff5ee'/%3E%3Cstop offset='100%25' stop-color='%23ffe8dc'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M12 9Q10.5 6 12 3' stroke='%23E8523B' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cpath d='M16 8Q14.5 5 16 2' stroke='%23FF8C5A' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cpath d='M20 9Q18.5 6 20 3' stroke='%232BAC76' stroke-width='1.5' stroke-linecap='round' fill='none' opacity='.7'/%3E%3Cellipse cx='16' cy='13' rx='12' ry='3.5' fill='%23C0311C'/%3E%3Cpath d='M4 14Q4 28 16 28Q28 28 28 14Z' fill='url(%23b)' stroke='%23C0311C' stroke-width='.5'/%3E%3Ccircle cx='10' cy='19' r='2.5' fill='%23E8523B'/%3E%3Ccircle cx='20' cy='18' r='2.2' fill='%232BAC76'/%3E%3Cellipse cx='15' cy='22' rx='3' ry='2' fill='%23FF8C5A'/%3E%3Ccircle cx='22' cy='22' r='1.5' fill='%23FFD166'/%3E%3Ccircle cx='8' cy='23' r='1.2' fill='%239B59B6'/%3E%3C/svg%3E") 16 28, pointer;
+}
+
+/* ── Smooth scroll reveal ─────────────────────────────── */
+section { transition: opacity .6s ease, transform .6s ease; }
+
+/* ── Glow al hover en ingrediente pills ─────────────── */
+.ingredient-glow:hover {
+  box-shadow: 0 0 16px rgba(232,82,59,.22), 0 4px 12px rgba(232,82,59,.1);
+  transform: translateY(-3px) scale(1.04);
+  border-color: #E8523B !important;
+}
+
+/* ── Parallax suave en secciones ─────────────────────── */
+.parallax-soft { will-change: transform; }
+
+/* ── Glow pulse para CTA ─────────────────────────────── */
+@keyframes ctaGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(168,32,16,.3); }
+  50%       { box-shadow: 0 4px 36px rgba(168,32,16,.5), 0 0 0 6px rgba(168,32,16,.08); }
+}
+.cta-glow { animation: ctaGlow 3s ease-in-out infinite; }
+
+/* ── Título animación de entrada ──────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim-fade-up { animation: fadeInUp .7s ease-out both; }
+
+/* ── Shimmer en sección de ingredientes ─────────────── */
+@keyframes shimmerBg {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer-bg {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerBg 3s linear infinite;
+}
+
+/* ── Hover scale suave para tarjetas de ingredientes ── */
+.step-card { transition: transform .3s ease, box-shadow .3s ease; }
+.step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(168,32,16,.1); }
 
 .material-symbols-rounded {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -204,10 +250,13 @@ body { overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
 .btn-ripple:active::after { transform: scale(2.5); opacity: 0; transition: 0s; }
 
 /* ── Reveal animaciones ─────────────────────────────────── */
-.reveal-up    { opacity: 0; transform: translateY(50px); }
-.reveal-left  { opacity: 0; transform: translateX(-50px); }
-.reveal-right { opacity: 0; transform: translateX(50px); }
-.reveal-scale { opacity: 0; transform: scale(.9); }
+.reveal-up    { opacity: 0; transform: translateY(50px);  transition: opacity .7s cubic-bezier(.2,1,.3,1), transform .7s cubic-bezier(.2,1,.3,1); }
+.reveal-left  { opacity: 0; transform: translateX(-50px); transition: opacity .7s cubic-bezier(.2,1,.3,1), transform .7s cubic-bezier(.2,1,.3,1); }
+.reveal-right { opacity: 0; transform: translateX(50px);  transition: opacity .7s cubic-bezier(.2,1,.3,1), transform .7s cubic-bezier(.2,1,.3,1); }
+.reveal-scale { opacity: 0; transform: scale(.9);         transition: opacity .7s cubic-bezier(.2,1,.3,1), transform .7s cubic-bezier(.2,1,.3,1); }
+.reveal-up.revealed, .reveal-left.revealed, .reveal-right.revealed, .reveal-scale.revealed {
+  opacity: 1; transform: none;
+}
 
 /* ── Secciones fondo ─────────────────────────────────────── */
 .section-cream { background: #FFFAF7; }
@@ -429,13 +478,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 <nav id="navbar">
   <div class="flex justify-between items-center px-6 md:px-10 py-4 max-w-7xl mx-auto">
 
-    <a href="#inicio" class="flex items-center">
-      <div class="h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden shadow-lg border-2 border-brand/30 shrink-0
-                  ring-2 ring-white/80 ring-offset-1 transition-transform hover:scale-105">
-        <img src="./images/logo.jpg" alt="Lulu Bowls"
-             class="w-full h-full object-cover"
-             style="image-rendering: crisp-edges; transform-origin: center;"/>
-      </div>
+    <a href="#inicio" class="flex items-center hover:scale-105 transition-transform duration-300">
+      <img src="./images/logo.jpg" alt="Lulu Bowls"
+           class="h-20 md:h-28 w-auto object-contain drop-shadow-sm"
+           style="image-rendering: -webkit-optimize-contrast;
+                  max-width: 220px; filter: contrast(1.15) saturate(1.2) brightness(1.03);
+                  mix-blend-mode: multiply; background: transparent;"/>
     </a>
 
     <div class="hidden md:flex gap-8 items-center">
@@ -569,10 +617,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
       <!-- badge flotante secundario -->
       <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-max float-anim-alt
                   bg-white rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-3 border border-brand/15">
-        <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-brand/15 shadow-sm">
-        <img src="./images/logo.jpg" alt="" class="w-full h-full object-cover"
-             style="image-rendering: crisp-edges;"/>
-      </div>
+<img src="./images/logo.jpg" alt="" class="w-16 h-16 object-contain shrink-0"
+             style="image-rendering: -webkit-optimize-contrast; filter: contrast(1.15) saturate(1.2) brightness(1.03); mix-blend-mode: multiply;"/>
+<img src="./images/logo.jpg" alt="" class="w-16 h-16 object-contain shrink-0"
+             style="image-rendering: -webkit-optimize-contrast; filter: contrast(1.15) saturate(1.2) brightness(1.03); mix-blend-mode: multiply;"/>
         <div>
           <div class="font-sans font-black text-sm text-text-main leading-none">Más pedido hoy</div>
           <div class="font-body text-xs text-text-soft mt-0.5">Lulu Signature</div>
@@ -709,7 +757,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
             </div>
             <div class="bg-cream rounded-xl p-3 mb-4 text-xs font-body text-text-soft leading-relaxed">
               <span class="font-bold text-text-main">Bases:</span> Arroz, Quinua, Lechuga &bull;
-              <span class="font-bold text-text-main">Proteínas:</span> Pollo crujiente, Trucha acevichada, Langostino furai, Pescado crujiente, Pescado acevichado, Chicharrón
+              <span class="font-bold text-text-main">Proteínas:</span> Pollo crujiente, Trucha Acevichada, Langostino furai, Pescado crujiente, Pescado acevichado, Chicharrón de chancho &bull;
+              <span class="font-bold text-text-main">Toppings:</span> Mango, Palta, Piña, Tomate cherry, Aros de cebolla, Col morada, Pepinillos y más &bull;
+              <span class="font-bold text-text-main">Salsas:</span> Acevichada, Spicy mayo, Anguila, Green punch, Maracuyá, Sriracha, Maracumango, Power hot ponzu &bull;
+              <span class="font-bold text-text-main">Extras:</span> Ajonjolí, Togarashi, Cilantro, Tajín
             </div>
             <button onclick="addCart('Poke Regular','S/ 24.9')"
                     class="w-full bg-[#A82010] text-white py-3 rounded-full font-sans font-black text-sm
@@ -738,7 +789,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
               <span class="font-sans font-black text-2xl text-[#A82010] shrink-0 ml-3">S/ 29.9</span>
             </div>
             <div class="bg-cream rounded-xl p-3 mb-4 text-xs font-body text-text-soft leading-relaxed">
-              <span class="font-bold text-text-main">Toppings extra:</span> Mango, Palta, Piña, Tomate cherry, Aros de cebolla, Col morada, Pepinillos, Canchita &amp; más
+              <span class="font-bold text-text-main">Bases:</span> Arroz, Quinua, Lechuga &bull;
+              <span class="font-bold text-text-main">Proteínas:</span> Pollo crujiente, Trucha Acevichada, Langostino furai, Pescado crujiente, Pescado acevichado, Chicharrón de chancho &bull;
+              <span class="font-bold text-text-main">6 Toppings:</span> Mango, Palta, Piña, Tomate cherry, Aros de cebolla, Col morada, Pepinillos, Canchita, Zanahoria, Chifles, Alga nori, Chips de papa nativa, Choclo, Chalaquita, Gari, Hilos de camote &bull;
+              <span class="font-bold text-text-main">Salsas:</span> Acevichada, Spicy mayo, Anguila, Green punch, Maracuyá, Sriracha &bull;
+              <span class="font-bold text-text-main">Extras:</span> Ajonjolí, Togarashi, Cilantro
             </div>
             <button onclick="addCart('Poke Grande','S/ 29.9')"
                     class="w-full bg-[#A82010] text-white py-3 rounded-full font-sans font-black text-sm
@@ -748,6 +803,180 @@ button, a { -webkit-tap-highlight-color: transparent; }
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── PERSONALIZA TU POKE ── -->
+    <div class="mb-14">
+      <div class="text-center mb-8 reveal-up">
+        <span class="inline-block bg-fresh-light text-fresh text-xs font-sans font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">Tú eliges, tú disfrutas</span>
+        <h3 class="font-sans font-black text-2xl md:text-3xl text-text-main">¿Cómo personalizar tu bowl?</h3>
+        <p class="font-body text-text-soft text-sm mt-2">Sigue los pasos y arma tu combinación perfecta</p>
+      </div>
+
+      <div class="space-y-4">
+
+        <!-- PASO 1: BASES -->
+        <div class="reveal-up bg-white rounded-[1.75rem] p-6 border border-brand/10 shadow-sm step-card">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="w-9 h-9 rounded-full bg-[#A82010] text-white flex items-center justify-center font-sans font-black text-sm shrink-0">1</span>
+            <div>
+              <h4 class="font-sans font-black text-base md:text-lg text-text-main">Escoge 2 Bases</h4>
+              <p class="font-body text-xs text-text-soft">Choose 2 bases</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🍚 Arroz</span>
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🌾 Quinua</span>
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🥬 Lechuga</span>
+          </div>
+        </div>
+
+        <!-- PASO 2: TOPPINGS -->
+        <div class="reveal-up bg-white rounded-[1.75rem] p-6 border border-brand/10 shadow-sm step-card" style="transition-delay:.05s">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="w-9 h-9 rounded-full bg-[#A82010] text-white flex items-center justify-center font-sans font-black text-sm shrink-0">2</span>
+            <div>
+              <h4 class="font-sans font-black text-base md:text-lg text-text-main">Escoge tus Toppings</h4>
+              <p class="font-body text-xs text-text-soft">Regular: 4 toppings · Grande: 6 toppings</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🥭 Mango</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🥑 Palta (Avocado)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🍍 Piña (Pineapple)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🍅 Tomate cherry</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🧅 Aros de cebolla</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🟣 Col morada (Purple cabbage)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🥒 Pepinillos (Pickles)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🥕 Zanahoria (Carrot)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🍠 Hilos de camote (Sweet potato strings)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🍌 Chifles (Plantain chips)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🌽 Canchita (Toasted corn)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🌿 Alga nori (Nori seaweed)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🥔 Chips de papa nativa</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🌽 Choclo (Corn)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🫙 Chalaquita (Peruvian salsa)</span>
+            <span class="flex items-center gap-1.5 bg-cream border border-brand/15 px-3 py-2 rounded-full font-sans font-semibold text-xs ingredient-glow text-text-main hover:border-brand transition-colors">🫚 Gari / Kion encurtido (Pickled ginger)</span>
+          </div>
+        </div>
+
+        <!-- PASO 3: PROTEÍNA -->
+        <div class="reveal-up bg-white rounded-[1.75rem] p-6 border border-brand/10 shadow-sm step-card" style="transition-delay:.1s">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="w-9 h-9 rounded-full bg-[#A82010] text-white flex items-center justify-center font-sans font-black text-sm shrink-0">3</span>
+            <div>
+              <h4 class="font-sans font-black text-base md:text-lg text-text-main">Escoge 1 Proteína</h4>
+              <p class="font-body text-xs text-text-soft">Choose 1 protein</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🍗</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Pollo Crujiente</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Crispy chicken</p>
+            </div>
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🐟</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Trucha Acevichada</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Ceviche trout</p>
+            </div>
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🦐</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Langostino Furai</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Fried shrimp</p>
+            </div>
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🐡</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Pescado Crujiente</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Crispy fish</p>
+            </div>
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🐠</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Pescado Acevichado</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Ceviche fish</p>
+            </div>
+            <div class="bg-cream rounded-2xl p-3 border border-brand/15 text-center hover:border-brand transition-colors">
+              <div class="text-2xl mb-1">🥩</div>
+              <p class="font-sans font-bold text-xs text-text-main leading-snug">Chicharrón de Chancho</p>
+              <p class="font-body text-[10px] text-text-soft mt-0.5">Pork belly</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 4: SALSAS -->
+        <div class="reveal-up bg-white rounded-[1.75rem] p-6 border border-brand/10 shadow-sm step-card" style="transition-delay:.15s">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="w-9 h-9 rounded-full bg-[#A82010] text-white flex items-center justify-center font-sans font-black text-sm shrink-0">4</span>
+            <div>
+              <h4 class="font-sans font-black text-base md:text-lg text-text-main">Escoge 3 Salsas</h4>
+              <p class="font-body text-xs text-text-soft">Choose 3 sauces</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🍋</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Acevichada</span><span class="font-body text-[10px] text-text-soft">Ceviche</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🌶️</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Spicy Mayo</span><span class="font-body text-[10px] text-text-soft">Spicy mayo</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🟤</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Anguila</span><span class="font-body text-[10px] text-text-soft">Eel sauce</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🟢</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Green Punch</span><span class="font-body text-[10px] text-text-soft">Punch</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🍊</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Maracuyá</span><span class="font-body text-[10px] text-text-soft">Passion fruit</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🔴</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Sriracha</span><span class="font-body text-[10px] text-text-soft">Sriracha</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🟡</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Maracumango</span><span class="font-body text-[10px] text-text-soft">Passion mango</span></div>
+            </div>
+            <div class="flex items-center gap-2 bg-cream rounded-2xl px-3 py-2.5 border border-brand/15 hover:border-brand transition-colors">
+              <span class="text-xl">🌶️</span>
+              <div><span class="font-sans font-bold text-xs text-text-main block">Power Hot Ponzu</span><span class="font-body text-[10px] text-text-soft">Spicy ponzu</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 5: EXTRAS -->
+        <div class="reveal-up bg-white rounded-[1.75rem] p-6 border border-brand/10 shadow-sm step-card" style="transition-delay:.2s">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="w-9 h-9 rounded-full bg-[#A82010] text-white flex items-center justify-center font-sans font-black text-sm shrink-0">5</span>
+            <div>
+              <h4 class="font-sans font-black text-base md:text-lg text-text-main">Escoge 2 Extras</h4>
+              <p class="font-body text-xs text-text-soft">Choose 2 extras</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">✨ Ajonjolí</span>
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🌶️ Togarashi</span>
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🌿 Cilantro</span>
+            <span class="flex items-center gap-2 bg-cream border border-brand/15 px-4 py-2.5 rounded-full font-sans font-semibold text-sm ingredient-glow text-text-main hover:border-brand transition-colors">🧂 Tajín</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA personalización -->
+      <div class="text-center mt-8 reveal-up">
+        <button onclick="openWA('Hola! 🍣 Quiero personalizar mi poke bowl. ¿Pueden ayudarme?')"
+                class="bg-fresh text-white px-10 py-4 rounded-full font-sans font-black text-sm
+                       uppercase tracking-wide hover:bg-[#229e6b] transition-all btn-ripple shadow-lg
+                       inline-flex items-center gap-2">
+          <span class="material-symbols-rounded">tune</span>
+          Personalizar por WhatsApp
+        </button>
       </div>
     </div>
 
@@ -981,7 +1210,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
     <div class="text-center mt-10 reveal-up">
       <button onclick="openWA('Hola! Quisiera hacer un pedido 🍣')"
-              class="bg-[#A82010] text-white px-12 py-4 rounded-full font-sans font-black text-sm
+              class="bg-[#A82010] text-white px-12 py-4 rounded-full font-sans font-black text-sm cta-glow
                      tracking-wide uppercase hover:bg-[#8A1A0B] transition-all btn-ripple shadow-lg flex items-center gap-3 mx-auto">
         <span class="material-symbols-rounded">chat</span>
         Hacer Pedido por WhatsApp
@@ -1115,10 +1344,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 <section class="bg-cream py-24 px-6 md:px-10 text-center border-t border-brand/10">
   <div class="max-w-3xl mx-auto reveal-up">
-      <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-8 shadow-xl border-2 border-white/30">
-        <img src="./images/logo.jpg" alt="Lulu Bowls"
-             class="w-full h-full object-cover"/>
-      </div>
+      <img src="./images/logo.jpg" alt="Lulu Bowls"
+           class="h-44 md:h-56 w-auto object-contain mx-auto mb-8 drop-shadow-md"
+           style="image-rendering: -webkit-optimize-contrast; filter: contrast(1.2) saturate(1.25) brightness(1.04); mix-blend-mode: multiply;"/>
     <h2 class="font-sans font-black text-4xl md:text-6xl text-black mb-6 leading-tight">
       ¿Listo para tu próximo<br/>
       <span class="gradient-text">
@@ -1148,11 +1376,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
 
       <div>
-        <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-white/30 mb-5 shadow-lg">
-          <img src="./images/logo.jpg" alt="Lulu Bowls"
-               class="w-full h-full object-cover"
-               style="image-rendering: crisp-edges;"/>
-        </div>
+        <img src="./images/logo.jpg" alt="Lulu Bowls"
+             class="h-32 w-auto object-contain mb-5 drop-shadow-lg"
+             style="image-rendering: -webkit-optimize-contrast; filter: brightness(0) invert(1) contrast(1.1);"/>
         <p class="font-body text-sm text-white leading-relaxed max-w-xs">
           Poke bowls artesanales con los mejores ingredientes frescos.
           Ubicados en la Plaza de Armas, Arequipa.
